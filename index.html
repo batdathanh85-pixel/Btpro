@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0757b8"><meta name="description" content="BT-Pro - Tính khối lượng và thành tiền sắt thép">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg">
+<title>BT-Pro – Tính sắt thép</title>
+<style>
+:root{--blue:#0866d5;--deep:#0757b8;--cyan:#13a6e8;--green:#168653;--orange:#f3a712;--bg:#f3f7fc;--ink:#15253a;--muted:#63758b;--line:#dce5ef}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:linear-gradient(125deg,#064da5,#087de0);color:#fff;padding:18px 16px 20px;border-radius:0 0 22px 22px;box-shadow:0 5px 18px #0757b833}
+.brand{display:flex;align-items:center;gap:11px}.brand img{width:48px;height:48px}.brand h1{font-size:23px;margin:0}.brand small{opacity:.85}
+main{max-width:760px;margin:auto;padding:14px 13px 90px}.card{background:white;border:1px solid var(--line);border-radius:17px;padding:15px;margin:12px 0;box-shadow:0 3px 12px #18385c08}
+h2{font-size:17px;margin:0 0 13px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{margin:10px 0}.field label{display:block;font-size:13px;color:var(--muted);font-weight:650;margin-bottom:6px}
+input,select,textarea{width:100%;border:1px solid #ccd9e7;border-radius:11px;padding:12px;font:inherit;background:#fff;color:var(--ink);min-width:0}textarea{min-height:125px;resize:vertical}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}.tab{border:1px solid #cbd9e8;background:#f7faff;padding:10px 12px;border-radius:11px;color:#31506f;font-weight:650}.tab.active{background:#e7f2ff;border-color:var(--blue);color:var(--deep)}
+button{cursor:pointer}.primary{width:100%;border:0;border-radius:12px;background:linear-gradient(110deg,#0757b8,#138be8);color:#fff;padding:14px;font-weight:800;font-size:16px;margin-top:10px}.secondary{border:1px solid var(--line);background:#f7faff;padding:10px 12px;border-radius:10px;color:#24527f;font-weight:650}
+.result{background:#e8f7ef;border:1px solid #c5ead4;border-radius:14px;padding:14px;margin-top:12px}.result .value{font-size:27px;font-weight:850;color:#087b43}.money{background:#fff4df;border-color:#f5dfb4}.money .value{color:#a96800}
+.muted{color:var(--muted);font-size:12px}.hidden{display:none!important}.row{display:flex;justify-content:space-between;gap:10px;margin:7px 0}.pill{font-size:12px;background:#eaf3ff;color:#0757b8;padding:5px 9px;border-radius:20px}
+.item{border:1px solid var(--line);border-radius:12px;padding:12px;margin:8px 0}.item strong{display:block}.footer{position:fixed;bottom:0;left:0;right:0;background:#ffffffed;border-top:1px solid var(--line);padding:10px;text-align:center;font-size:12px;color:var(--muted);backdrop-filter:blur(8px)}
+@media(max-width:420px){.grid{gap:8px}.card{padding:13px}.value{font-size:24px!important}}
+</style></head>
+<body>
+<header><div class="brand"><img src="icon.svg"><div><h1>BT-Pro</h1><small>TÍNH KHỐI LƯỢNG & THÀNH TIỀN SẮT THÉP</small></div></div></header>
+<main>
+<section class="card">
+<h2>1. Chọn chủng loại</h2>
+<div class="tabs" id="types">
+<button class="tab active" data-type="box">Sắt hộp</button><button class="tab" data-type="square">Vuông đặc</button><button class="tab" data-type="round">Tròn đặc</button><button class="tab" data-type="flat">Sắt la</button><button class="tab" data-type="rebar">Thép phi</button>
+</div>
+<div class="grid">
+<div class="field" id="wWrap"><label id="wLabel">Cạnh / rộng ngoài (mm)</label><input id="w" type="number" min="0.01" step="any" value="40"></div>
+<div class="field hidden" id="hWrap"><label>Chiều cao ngoài (mm)</label><input id="h" type="number" min="0.01" step="any" value="40"></div>
+<div class="field" id="tWrap"><label id="tLabel">Độ dày thành (mm)</label><input id="t" type="number" min="0.01" step="any" value="1.4"></div>
+<div class="field"><label>Khối lượng riêng (kg/m³)</label><input id="density" type="number" min="1" step="any" value="7850"></div>
+</div>
+<div class="muted" id="dimensionHint">Hộp vuông: nhập kích thước ngoài và độ dày thành.</div>
+</section>
+<section class="card">
+<h2>2. Cách nhập chiều dài</h2>
+<div class="tabs"><button class="tab active" id="modePieces">Theo số cây</button><button class="tab" id="modeMeters">Tổng mét</button><button class="tab" id="modeList">Danh sách đoạn</button></div>
+<div id="piecesPanel">
+<div class="grid">
+<div class="field"><label>Số cây</label><input id="pieces" type="number" min="0" step="any" value="20"></div>
+<div class="field"><label>Chiều dài mỗi cây (m)</label><input id="pieceLength" type="number" min="0.001" step="any" value="6"></div>
+</div><div class="muted" id="defaultLength">Chiều dài gợi ý theo loại sắt; có thể thay đổi tùy ý.</div>
+</div>
+<div id="metersPanel" class="hidden"><div class="field"><label>Tổng chiều dài (m)</label><input id="meters" type="number" min="0" step="any" placeholder="Ví dụ: 120"></div></div>
+<div id="listPanel" class="hidden">
+<div class="field"><label>Nhập chiều dài các đoạn (mặc định đơn vị mm)</label><textarea id="lengthList" placeholder="Ví dụ: 1000+800 700&#10;2000,2300;1500"></textarea></div>
+<div class="muted">Ngăn cách bằng dấu cách, +, dấu phẩy, chấm phẩy hoặc xuống dòng. Số thập phân dùng dấu chấm hoặc dấu phẩy khi không gây nhầm với dấu phân cách; danh sách nên dùng số nguyên mm.</div>
+<div class="field"><label>Đơn vị chiều dài nhập</label><select id="listUnit"><option value="mm">Milimét (mm)</option><option value="cm">Centimét (cm)</option><option value="m">Mét (m)</option></select></div>
+<div class="row"><span>Số đoạn hợp lệ</span><strong id="count">0</strong></div><div class="row"><span>Tổng chiều dài tạm tính</span><strong id="listTotal">0 m</strong></div>
+</div>
+</section>
+<section class="card">
+<h2>3. Kết quả và đơn giá</h2>
+<div class="row"><span>Tổng chiều dài</span><strong id="outLength">–</strong></div>
+<div class="row"><span>Khối lượng trên mét</span><strong id="outKgM">–</strong></div>
+<div class="result"><div class="muted">TỔNG KHỐI LƯỢNG LÝ THUYẾT</div><div class="value" id="outKg">– kg</div></div>
+<div class="field"><label>Đơn giá (đồng/kg)</label><input id="price" type="number" min="0" step="any" placeholder="Ví dụ: 18000"></div>
+<div class="result money"><div class="muted">THÀNH TIỀN</div><div class="value" id="outMoney">– đ</div></div>
+<button class="primary" id="calculate">TÍNH KHỐI LƯỢNG & TIỀN</button>
+<p class="muted">Kết quả là trọng lượng lý thuyết. Khối lượng thực tế có thể chênh lệch do góc bo, dung sai, lớp mạ và tiêu chuẩn sản xuất.</p>
+</section>
+<section class="card"><h2>Ghi chú công thức</h2><div class="muted">Thép mặc định 7.850 kg/m³. Hộp tính theo kích thước ngoài trừ phần rỗng; thép đặc, la và thép tròn tính theo diện tích tiết diện. Với thép hộp, công thức hình học thành vuông có thể chênh nhẹ so với sản phẩm có góc bo thực tế.</div></section>
+</main><div class="footer">BT-Pro • Công cụ tính khối lượng sắt thép</div>
+<script src="app.js"></script><script>if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));</script>
+</body></html>
